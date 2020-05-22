@@ -94,13 +94,12 @@ proc initialize_tooltips {} {
 	create_tooltip .c [expr $w/2+125] 250 "right_E" "right_E_TAG right"
 
 	# middle ones
-
 	.c create line [expr $w/2] 0 [expr $w/2] $h -fill black
 	create_tooltip .c [expr $w/2] [expr $h/2+50] "anchor_right" "anchor_right_TAG" -anchor right
 	create_tooltip .c [expr $w/2] [expr $h/2] "anchor_center" "anchor_center_TAG" -anchor center
 	create_tooltip .c [expr $w/2] [expr $h/2-50] "anchor_left" "anchor_left_TAG" -anchor left
 
-	.c bind "tooltip" <ButtonPress> {dbg "Clicked on tooltip (%x, %y)"}
+	.c bind "tooltip" <ButtonPress> {dbg "[find_tooltip_by_pos %x %y]"}
 }
 
 proc initialize_test_window {} {
@@ -118,10 +117,10 @@ proc initialize_test_window {} {
 	button .test.del_left -text "delete left" -command {delete_tooltips_with_tag "left"}
 	button .test.del_right -text "delete right" -command {delete_tooltips_with_tag "right"}
 
-	label .test.escape -text "Press Escape to quit"
+	label .test.helptext -text "click tooltips!\nPress Escape to quit"
 
 	grid .test.restart -row 0 -column 0
-	grid .test.escape -row 0 -column 1
+	grid .test.helptext -row 0 -column 1
 	grid .test.del_left -row 1 -column 0
 	grid .test.del_right -row 1 -column 1
 }
@@ -133,8 +132,22 @@ proc delete_tooltips_with_tag {tag} {
 	}
 }
 
-proc print_info {} {
-
+proc find_tooltip_by_pos {x y} {
+	set all [.c find all]
+	foreach i $all {
+    	set bbox [.c bbox $i]
+    	set x1 [lindex $bbox 0]
+    	set y1 [lindex $bbox 1]
+    	set x2 [lindex $bbox 2]
+    	set y2 [lindex $bbox 3]
+    	if {$x >= $x1 && $x <= $x2 && $y >= $y1 && $y <= $y2} {
+    		lappend hit $i
+    		if {[.c type $i] eq "text"} {
+				return [.c itemcget $i -text]
+    		}
+    	}
+	}
+	return "not found"
 }
 
 proc restart {} {
