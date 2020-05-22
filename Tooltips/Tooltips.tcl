@@ -62,7 +62,7 @@ proc initialize_windows {} {
 	label .console
 	.console configure -text ""
 	bind . <Key-Escape> exit
-
+	bind . <Key-BackSpace> clear_tooltips
 
 	pack .c
 	pack .console
@@ -125,8 +125,14 @@ proc initialize_test_window {} {
 	grid .test.del_right -row 1 -column 1
 }
 
+# deletes all tooltips with the given tag
 proc delete_tooltips {tag} {
 	.c delete $tag
+}
+
+proc clear_tooltips {} {
+	dbg "BackSpace pressed. Tooltips cleared!"
+	delete_tooltips "tooltip"
 }
 
 proc find_tooltip_by_pos {x y} {
