@@ -1,30 +1,19 @@
-proc dbg {str} {
-	set curr [.console cget -text]
-	if {$curr eq ""} {
-		.console configure -text "$str"
-	} else {
-		.console configure -text "$curr\n$str"
-	}
-}
-
-proc dbg_clear {} {
-	.console configure -text ""
-}
-
 # Tooltips can have as many tags as you need.
 # The first tag should always be a unique identifier for the tooltip!
 # all tooltips will receive a "tooltip" tag
 #
-# The colors are passed TK style using
+# optional parameters are passed TK style
 #	-textcolor
 #	-bkg
 #	-outline
+#   -anchor left/center/right
+#
 # see:
 # https://stackoverflow.com/questions/29150599/call-tcl-proc-with-named-arguments
 proc create_tooltip {mytoplevel x y text tags args} {
 	set uniqueTag [lindex $tags 0]
-	set textTags "$tags tooltip"
-	set bkgTags "$tags tooltipBkg"
+	set textTags "$tags tooltip tooltipText"
+	set bkgTags "$tags tooltip tooltipBkg"
 
 	array set optional [list -textcolor "blue" -bkg "white" -outline "blue" -anchor center {*}$args]
 	set textcolor $optional(-textcolor)
@@ -103,10 +92,9 @@ proc initialize_tooltips {} {
 }
 
 proc initialize_test_window {} {
-	#window with the commands
+	# window with the buttons
 	toplevel .test
 	bind .test <Key-Escape> exit
-	#button .test.restart -text "restart" -command {initialize_tooltips}
 	button .test.restart -text "restart" -command {restart}
 
 	# needed to get correct info
@@ -117,7 +105,7 @@ proc initialize_test_window {} {
 	button .test.del_left -text "delete left" -command {delete_tooltips "left"}
 	button .test.del_right -text "delete right" -command {delete_tooltips "right"}
 
-	label .test.helptext -text "click tooltips!\nPress Escape to quit"
+	label .test.helptext -text "click tooltips!\nPress BackSpace to clear and Escape to quit"
 
 	grid .test.restart -row 0 -column 0
 	grid .test.helptext -row 0 -column 1
@@ -161,6 +149,20 @@ proc restart {} {
 	initialize_tooltips
 	#focus .test
 	raise .
+}
+
+# used to print messages on the main window
+proc dbg {str} {
+	set curr [.console cget -text]
+	if {$curr eq ""} {
+		.console configure -text "$str"
+	} else {
+		.console configure -text "$curr\n$str"
+	}
+}
+
+proc dbg_clear {} {
+	.console configure -text ""
 }
 
 initialize_windows
