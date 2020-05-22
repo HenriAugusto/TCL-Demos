@@ -48,7 +48,7 @@ proc create_tooltip {mytoplevel x y text tags args} {
     }
 
     button .test.del_btn_$textId -text "delete $text using textId: $textId" -command ".c delete $textId;.c delete $bkgId;"
-    button .test.del_btn_tag_$textId -text "delete $text using unique tags: $uniqueTag" -command ".c delete $uniqueTag"
+    button .test.del_btn_tag_$textId -text "delete $text using unique tags: $uniqueTag" -command "delete_tooltips $uniqueTag"
 
     grid .test.del_btn_$textId -row [expr {$textId+1}] -column 0
     grid .test.del_btn_tag_$textId -row [expr {$textId+1}] -column 1
@@ -114,8 +114,8 @@ proc initialize_test_window {} {
 
 	wm geometry .test +[winfo width .]+0
 
-	button .test.del_left -text "delete left" -command {delete_tooltips_with_tag "left"}
-	button .test.del_right -text "delete right" -command {delete_tooltips_with_tag "right"}
+	button .test.del_left -text "delete left" -command {delete_tooltips "left"}
+	button .test.del_right -text "delete right" -command {delete_tooltips "right"}
 
 	label .test.helptext -text "click tooltips!\nPress Escape to quit"
 
@@ -125,11 +125,8 @@ proc initialize_test_window {} {
 	grid .test.del_right -row 1 -column 1
 }
 
-proc delete_tooltips_with_tag {tag} {
-	set results [.c find withtag $tag]
-	foreach i $results {
-		.c delete $i
-	}
+proc delete_tooltips {tag} {
+	.c delete $tag
 }
 
 proc find_tooltip_by_pos {x y} {
